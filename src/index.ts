@@ -157,6 +157,11 @@ class MovieApp {
   private infoContent: HTMLElement;
   private closeInfoBtn: HTMLElement;
   private infoBody: HTMLElement;
+  private downloadBtn: HTMLElement; // New download button
+
+  // Current stream data
+  private currentStreamUrl: string = '';
+  private currentMovieTitle: string = '';
 
   // HLS player
   private hls: any = null; // Type would be Hls, but we're loading from CDN
@@ -187,6 +192,7 @@ class MovieApp {
     this.infoContent = document.getElementById('infoContent') as HTMLElement;
     this.closeInfoBtn = document.getElementById('closeInfoBtn') as HTMLElement;
     this.infoBody = document.getElementById('infoBody') as HTMLElement;
+    this.downloadBtn = document.getElementById('downloadBtn') as HTMLElement;
     
     // Setup event listeners
     this.setupEventListeners();
@@ -222,6 +228,9 @@ class MovieApp {
         this.videoEl.pause();
       }
     });
+    
+    // Download button
+    this.downloadBtn.addEventListener('click', () => this.downloadCurrentVideo());
     
     // Info modal close
     this.closeInfoBtn.onclick = () => {
@@ -286,6 +295,8 @@ class MovieApp {
       // only open stream if not clicking on info/fav
       if ((e.target as HTMLElement).classList.contains('fav-btn') || 
           (e.target as HTMLElement).classList.contains('info-btn')) return;
+      
+      this.currentMovieTitle = item.Title; // Store the title for download
       this.onCardClick(item.imdbID);
     });
     
@@ -419,6 +430,7 @@ class MovieApp {
   private async onCardClick(id: string): Promise<void> {
     this.errorMsg.textContent = '';
     this.optionsEl.innerHTML = '';
+    this.downloadBtn.style.display = 'none'; // Hide download button until stream is ready
     if (this.hls) { this.hls.destroy(); this.hls = null; }
     this.videoEl.pause(); this.videoEl.removeAttribute('src'); this.videoEl.load();
     this.modal.style.display = 'flex';
@@ -503,7 +515,9 @@ class MovieApp {
     this.errorMsg.textContent = '';
     try {
       const url = await this.apiService.getStreamUrl(file, key);
+      this.currentStreamUrl = url; // Store current URL for download
       this.loadStream(url);
+      this.downloadBtn.style.display = 'block'; // Show download button when stream is ready
     } catch (e: any) {
       this.errorMsg.textContent = e.message || 'Error loading stream';
     }
@@ -526,6 +540,28 @@ class MovieApp {
     } else {
       this.errorMsg.textContent = 'HLS not supported in this browser';
     }
+  }
+  
+  // Download function
+  private downloadCurrentVideo(): void {
+    if (!this.currentStreamUrl) {
+      this.errorMsg.textContent = 'No stream available to download';
+      return;
+    }
+    
+    // Create a download link
+    const a = document.createElement('a');
+    a.href = this.currentStreamUrl;
+    a.download = `${this.currentMovieTitle || 'movie'}.mp4`; // Use the movie title for the download
+    
+    // Some browsers require the link to be in the DOM
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(a);
+    }, 100);
   }
   
   // Initial content loaders
