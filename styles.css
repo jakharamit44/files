@@ -732,25 +732,58 @@ video {
   margin-bottom: 1.2rem;
 }
 
-/* Add this to your existing CSS file */
+/* Add these styles to your existing stylesheet */
 
-.player-controls {
-  display: flex;
-  justify-content: flex-end;
-  margin: 1rem 0;
+/* Search Results Section */
+#searchResultsSection {
+  margin: 2rem auto;
+  max-width: 1400px;
+  padding: 0 1rem;
 }
 
+/* Make search results stand out when there are results */
+#results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 1.5rem;
+  margin: 0 auto;
+  max-width: 1400px;
+  width: 100%;
+}
+
+/* Style the video container to position the download button properly */
+.video-container {
+  position: relative;
+  margin-top: 1.2rem;
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  background: #000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  outline: none;
+  border: 2px solid var(--accent);
+  transition: border var(--transition);
+  max-height: 65vh;
+  min-height: 260px;
+}
+
+/* Download button - positioned below the video player */
 .download-btn {
   background: var(--accent);
   color: var(--primary);
   border: none;
   border-radius: var(--radius);
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.4rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  display: inline-block; /* Make visible by default */
   transition: background-color 0.2s, transform 0.2s;
+  display: block;
+  margin: 1rem 0 0 auto; /* Position to the right */
 }
 
 .download-btn:hover {
@@ -764,6 +797,20 @@ video {
 
 .download-btn i {
   margin-right: 0.5rem;
+}
+
+/* Update existing video styles */
+video {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  background: #000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  outline: none;
+  border: 2px solid var(--accent);
+  transition: border var(--transition);
+  max-height: 65vh;
+  min-height: 260px;
 }
 
 

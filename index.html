@@ -34,6 +34,16 @@
     <button id="applyFilters">Apply Filters</button>
   </div>
   
+  <!-- Search Results - Moved to top -->
+  <section id="searchResultsSection">
+    <div id="results"></div>
+  </section>
+  
+  <section id="favSection">
+    <h2>Favorites</h2>
+    <div id="favResults"></div>
+  </section>
+  
   <!-- Latest Movies Section -->
   <section class="category-section" id="latestMoviesSection">
     <h2 class="category-title"><i class="fas fa-film"></i> Latest Movies</h2>
@@ -90,19 +100,14 @@
     </div>
   </section>
   
-  <section id="favSection">
-    <h2>Favorites</h2>
-    <div id="favResults"></div>
-  </section>
-  <div id="results"></div>
   <div id="playerModal">
     <div id="playerContent">
       <button id="closeBtn" aria-label="Close">&times;</button>
       <div id="options"></div>
-      <div class="player-controls">
+      <div class="video-container">
+        <video id="video" controls></video>
         <button id="downloadBtn" class="download-btn"><i class="fas fa-download"></i> Download</button>
       </div>
-      <video id="video" controls></video>
       <div id="errorMsg" class="error"></div>
     </div>
   </div>

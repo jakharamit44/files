@@ -331,19 +331,19 @@ class MovieApp {
     this.searchMovies(q);
   }
   
-  private async searchMovies(q: string): Promise<void> {
-    this.resultsEl.innerHTML = '';
-    const type = this.typeFilter.value;
-    const year = this.yearFilter.value;
-    const page = this.pageFilter.value;
+  // private async searchMovies(q: string): Promise<void> {
+  //   this.resultsEl.innerHTML = '';
+  //   const type = this.typeFilter.value;
+  //   const year = this.yearFilter.value;
+  //   const page = this.pageFilter.value;
     
-    try {
-      const movies = await this.apiService.searchMovies(q, type, year, page);
-      this.renderResults(movies);
-    } catch (error: any) {
-      this.resultsEl.innerHTML = `<p class="error">${error.message || 'Search failed'}</p>`;
-    }
-  }
+  //   try {
+  //     const movies = await this.apiService.searchMovies(q, type, year, page);
+  //     this.renderResults(movies);
+  //   } catch (error: any) {
+  //     this.resultsEl.innerHTML = `<p class="error">${error.message || 'Search failed'}</p>`;
+  //   }
+  // }
   
   private renderResults(list: MovieItem[]): void {
     this.resultsEl.innerHTML = '';
@@ -516,17 +516,17 @@ class MovieApp {
     this.optionsEl.append(seasonSel, episodeSel, langSel);
   }
   
-  private async playLanguage(file: string, key: string): Promise<void> {
-    this.errorMsg.textContent = '';
-    try {
-      const url = await this.apiService.getStreamUrl(file, key);
-      this.currentStreamUrl = url; // Store current URL for download
-      this.loadStream(url);
-      console.log("Stream URL set:", this.currentStreamUrl); // For debugging
-    } catch (e: any) {
-      this.errorMsg.textContent = e.message || 'Error loading stream';
-    }
-  }
+  // private async playLanguage(file: string, key: string): Promise<void> {
+  //   this.errorMsg.textContent = '';
+  //   try {
+  //     const url = await this.apiService.getStreamUrl(file, key);
+  //     this.currentStreamUrl = url; // Store current URL for download
+  //     this.loadStream(url);
+  //     console.log("Stream URL set:", this.currentStreamUrl); // For debugging
+  //   } catch (e: any) {
+  //     this.errorMsg.textContent = e.message || 'Error loading stream';
+  //   }
+  // }
   
   private loadStream(url: string): void {
     if (this.hls) { this.hls.destroy(); this.hls = null; }
@@ -548,14 +548,86 @@ class MovieApp {
   }
   
   // Download function
-  private downloadCurrentVideo(): void {
-    if (!this.currentStreamUrl) {
-      alert('No video available for download yet. Please wait for video to load.');
-      return;
+  // private downloadCurrentVideo(): void {
+  //   if (!this.currentStreamUrl) {
+  //     alert('No video available for download yet. Please wait for video to load.');
+  //     return;
+  //   }
+    
+  //   console.log("Downloading from URL:", this.currentStreamUrl);
+    
+  //   // Create a download link
+  //   const a = document.createElement('a');
+  //   a.href = this.currentStreamUrl;
+  //   a.download = `${this.currentMovieTitle || 'movie'}.mp4`;
+  //   a.target = "_blank"; // Open in new tab if browser doesn't support direct download
+    
+  //   // Show downloading message
+  //   alert(`Starting download for "${this.currentMovieTitle || 'movie'}"...`);
+    
+  //   // Some browsers require the link to be in the DOM
+  //   document.body.appendChild(a);
+  //   a.click();
+    
+  //   // Clean up
+  //   setTimeout(() => {
+  //     document.body.removeChild(a);
+  //   }, 100);
+  // }
+  // Update these methods in your MovieApp class:
+
+private async searchMovies(q: string): Promise<void> {
+  this.resultsEl.innerHTML = '<div class="loading-container"><div class="loader"></div></div>';
+  const type = this.typeFilter.value;
+  const year = this.yearFilter.value;
+  const page = this.pageFilter.value;
+  
+  try {
+    const movies = await this.apiService.searchMovies(q, type, year, page);
+    this.renderResults(movies);
+    
+    // Scroll to search results
+    document.getElementById('searchResultsSection')?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  } catch (error: any) {
+    this.resultsEl.innerHTML = `<p class="error">${error.message || 'Search failed'}</p>`;
+  }
+}
+
+// Fix download button visibility
+private async playLanguage(file: string, key: string): Promise<void> {
+  this.errorMsg.textContent = '';
+  try {
+    const url = await this.apiService.getStreamUrl(file, key);
+    this.currentStreamUrl = url; // Store current URL for download
+    this.loadStream(url);
+    console.log("Stream URL set:", this.currentStreamUrl); // For debugging
+    
+    // Make sure download button is visible - this is the key fix
+    if (this.downloadBtn) {
+      this.downloadBtn.style.display = 'block';
+    } else {
+      console.error("Download button element not found");
     }
-    
-    console.log("Downloading from URL:", this.currentStreamUrl);
-    
+  } catch (e: any) {
+    this.errorMsg.textContent = e.message || 'Error loading stream';
+  }
+}
+
+// Update download function to be more reliable
+private downloadCurrentVideo(): void {
+  console.log("Download button clicked");
+  
+  if (!this.currentStreamUrl) {
+    alert('No video available for download yet. Please wait for video to load.');
+    return;
+  }
+  
+  console.log("Current stream URL:", this.currentStreamUrl);
+  
+  try {
     // Create a download link
     const a = document.createElement('a');
     a.href = this.currentStreamUrl;
@@ -573,8 +645,11 @@ class MovieApp {
     setTimeout(() => {
       document.body.removeChild(a);
     }, 100);
+  } catch (error) {
+    console.error("Download error:", error);
+    alert("Download failed. Try again or check console for details.");
   }
-  
+}
   // Initial content loaders
   private async loadMoviesBySearch(
     containerId: string, 
