@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie & Web Series Streamer</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="dist/bundle.js" defer></script>
+</head>
+<body>
+  <header><h1>Movie & Web Series Streamer</h1></header>
+  <div id="searchBar">
+    <input type="text" id="searchInput" placeholder="Search by title...">
+    <div id="searchControlsWrapper">
+      <button id="searchBtn">Search</button>
+      <button id="advancedToggle" type="button">Advanced</button>
+    </div>
+  </div>
+  <div id="advancedOptions">
+    <label for="typeFilter">Type:</label>
+    <select id="typeFilter">
+      <option value="">All</option>
+      <option value="movie">Movie</option>
+      <option value="series">Series</option>
+      <option value="episode">Episode</option>
+    </select>
+    <label for="yearFilter">Year:</label>
+    <input type="number" id="yearFilter" min="1900" max="2099" step="1" placeholder="e.g. 2022">
+    <label for="pageFilter">Page:</label>
+    <input type="number" id="pageFilter" min="1" max="99" step="1" value="1">
+    <button id="applyFilters">Apply Filters</button>
+  </div>
+  
+  <!-- Latest Movies Section -->
+  <section class="category-section" id="latestMoviesSection">
+    <h2 class="category-title"><i class="fas fa-film"></i> Latest Movies</h2>
+    <div class="scroll-nav">
+      <button class="scroll-btn scroll-left" data-target="latestMovies"><i class="fas fa-chevron-left"></i></button>
+      <button class="scroll-btn scroll-right" data-target="latestMovies"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="scroll-container" id="latestMovies">
+      <div class="loading-container">
+        <div class="loader"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Latest Web Series Section -->
+  <section class="category-section" id="latestSeriesSection">
+    <h2 class="category-title"><i class="fas fa-tv"></i> Latest Web Series</h2>
+    <div class="scroll-nav">
+      <button class="scroll-btn scroll-left" data-target="latestSeries"><i class="fas fa-chevron-left"></i></button>
+      <button class="scroll-btn scroll-right" data-target="latestSeries"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="scroll-container" id="latestSeries">
+      <div class="loading-container">
+        <div class="loader"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Trending Movies Section -->
+  <section class="category-section" id="trendingMoviesSection">
+    <h2 class="category-title"><i class="fas fa-fire"></i> Trending Movies</h2>
+    <div class="scroll-nav">
+      <button class="scroll-btn scroll-left" data-target="trendingMovies"><i class="fas fa-chevron-left"></i></button>
+      <button class="scroll-btn scroll-right" data-target="trendingMovies"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="scroll-container" id="trendingMovies">
+      <div class="loading-container">
+        <div class="loader"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Action Movies Section -->
+  <section class="category-section" id="actionMoviesSection">
+    <h2 class="category-title"><i class="fas fa-fist-raised"></i> Action Movies</h2>
+    <div class="scroll-nav">
+      <button class="scroll-btn scroll-left" data-target="actionMovies"><i class="fas fa-chevron-left"></i></button>
+      <button class="scroll-btn scroll-right" data-target="actionMovies"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="scroll-container" id="actionMovies">
+      <div class="loading-container">
+        <div class="loader"></div>
+      </div>
+    </div>
+  </section>
+  
+  <section id="favSection">
+    <h2>Favorites</h2>
+    <div id="favResults"></div>
+  </section>
+  <div id="results"></div>
+  <div id="playerModal">
+    <div id="playerContent">
+      <button id="closeBtn" aria-label="Close">&times;</button>
+      <div id="options"></div>
+      <video id="video" controls></video>
+      <div id="errorMsg" class="error"></div>
+    </div>
+  </div>
+  <div class="info-modal" id="infoModal">
+    <div class="info-content" id="infoContent">
+      <button class="info-close" id="closeInfoBtn">&times;</button>
+      <div id="infoBody"></div>
+    </div>
+  </div>
+</body>
+</html>
