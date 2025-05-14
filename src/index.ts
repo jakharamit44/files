@@ -157,7 +157,7 @@ class MovieApp {
   private infoContent: HTMLElement;
   private closeInfoBtn: HTMLElement;
   private infoBody: HTMLElement;
-  private downloadBtn: HTMLElement; // New download button
+  private downloadBtn: HTMLElement;
 
   // Current stream data
   private currentStreamUrl: string = '';
@@ -230,7 +230,13 @@ class MovieApp {
     });
     
     // Download button
-    this.downloadBtn.addEventListener('click', () => this.downloadCurrentVideo());
+    if (this.downloadBtn) {
+      this.downloadBtn.addEventListener('click', () => {
+        this.downloadCurrentVideo();
+      });
+    } else {
+      console.error("Download button not found in DOM");
+    }
     
     // Info modal close
     this.closeInfoBtn.onclick = () => {
@@ -430,7 +436,6 @@ class MovieApp {
   private async onCardClick(id: string): Promise<void> {
     this.errorMsg.textContent = '';
     this.optionsEl.innerHTML = '';
-    this.downloadBtn.style.display = 'none'; // Hide download button until stream is ready
     if (this.hls) { this.hls.destroy(); this.hls = null; }
     this.videoEl.pause(); this.videoEl.removeAttribute('src'); this.videoEl.load();
     this.modal.style.display = 'flex';
@@ -517,7 +522,7 @@ class MovieApp {
       const url = await this.apiService.getStreamUrl(file, key);
       this.currentStreamUrl = url; // Store current URL for download
       this.loadStream(url);
-      this.downloadBtn.style.display = 'block'; // Show download button when stream is ready
+      console.log("Stream URL set:", this.currentStreamUrl); // For debugging
     } catch (e: any) {
       this.errorMsg.textContent = e.message || 'Error loading stream';
     }
@@ -545,14 +550,20 @@ class MovieApp {
   // Download function
   private downloadCurrentVideo(): void {
     if (!this.currentStreamUrl) {
-      this.errorMsg.textContent = 'No stream available to download';
+      alert('No video available for download yet. Please wait for video to load.');
       return;
     }
+    
+    console.log("Downloading from URL:", this.currentStreamUrl);
     
     // Create a download link
     const a = document.createElement('a');
     a.href = this.currentStreamUrl;
-    a.download = `${this.currentMovieTitle || 'movie'}.mp4`; // Use the movie title for the download
+    a.download = `${this.currentMovieTitle || 'movie'}.mp4`;
+    a.target = "_blank"; // Open in new tab if browser doesn't support direct download
+    
+    // Show downloading message
+    alert(`Starting download for "${this.currentMovieTitle || 'movie'}"...`);
     
     // Some browsers require the link to be in the DOM
     document.body.appendChild(a);
